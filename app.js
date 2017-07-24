@@ -28,7 +28,7 @@ var cronJob = cron.job("0 0 * * * *", function(){
     jbit.getAllCurrencies(function(all_currencies) {
         for (var i=0; i<all_currencies.length; i++) {
 
-            //console.log("getting data for " + all_currencies[i]);
+            console.log("getting data for " + all_currencies[i]);
             //jbit.queryPoloniex(all_currencies[i]);
             jbit.saveMarketSummary(all_currencies[i]);
             jbit.saveOrderBook(all_currencies[i]);
@@ -39,6 +39,17 @@ var cronJob = cron.job("0 0 * * * *", function(){
 
 
 cronJob.start();
+
+jbit.getAllCurrencies(function(all_currencies) {
+    for (var i=0; i<all_currencies.length; i++) {
+
+        console.log("getting data for " + all_currencies[i]);
+        //jbit.queryPoloniex(all_currencies[i]);
+        jbit.saveMarketSummary(all_currencies[i]);
+        jbit.saveOrderBook(all_currencies[i]);
+    }
+});
+console.info('first run completed');
 
 
 var app = express();
