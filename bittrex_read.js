@@ -173,12 +173,14 @@ var saveOrderBook     = function (currency, callback) {
             SQL         = "INSERT INTO `orderBooks` (currency, direction, Quantity, Rate, bookid) VALUES ? ",
             VALS        = [];
 
-        data.result["buy"].forEach(function(order){
-            VALS.push([currency, "buy", order["Quantity"],order["Rate"], bookid]);
-        });
-        data.result["sell"].forEach(function(order){
-            VALS.push([currency, "sell", order["Quantity"],order["Rate"], bookid]);
-        });
+        if (data.result.hasOwnProperty('buy') )
+            data.result["buy"].forEach(function(order){
+                VALS.push([currency, "buy", order["Quantity"],order["Rate"], bookid]);
+            });
+        if (data.result.hasOwnProperty('sell') )
+            data.result["sell"].forEach(function(order){
+                VALS.push([currency, "sell", order["Quantity"],order["Rate"], bookid]);
+            });
 
 
         db.getConnection(function(err, con) {
