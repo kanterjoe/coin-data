@@ -168,28 +168,29 @@ var saveMarketSummary = function (currency, callback) {
 var saveOrderBook     = function (currency, callback) {
     bittrex.getorderbook({ market : 'BTC-' + currency, depth : 50, type : 'both' }, function( data ) {
         //console.log( data );
+        if (data.result) {
+            var bookid = currency + dateFormat(new Date(), "yyyymmddhMM"),
+                SQL = "INSERT INTO `orderBooks` (currency, direction, Quantity, Rate, bookid) VALUES ? ",
+                VALS = [];
 
-        var bookid      = currency + dateFormat(new Date(), "yyyymmddhMM"),
-            SQL         = "INSERT INTO `orderBooks` (currency, direction, Quantity, Rate, bookid) VALUES ? ",
-            VALS        = [];
-
-        if (data.result.hasOwnProperty('buy') )
-            data.result["buy"].forEach(function(order){
-                VALS.push([currency, "buy", order["Quantity"],order["Rate"], bookid]);
-            });
-        if (data.result.hasOwnProperty('sell') )
-            data.result["sell"].forEach(function(order){
-                VALS.push([currency, "sell", order["Quantity"],order["Rate"], bookid]);
-            });
+            if (data.result.hasOwnProperty('buy'))
+                data.result["buy"].forEach(function (order) {
+                    VALS.push([currency, "buy", order["Quantity"], order["Rate"], bookid]);
+                });
+            if (data.result.hasOwnProperty('sell'))
+                data.result["sell"].forEach(function (order) {
+                    VALS.push([currency, "sell", order["Quantity"], order["Rate"], bookid]);
+                });
 
 
-        db.getConnection(function(err, con) {
-            if (err) throw err;
-            con.query(SQL, [VALS], function (err, result, fields) {
+            db.getConnection(function (err, con) {
                 if (err) throw err;
-                con.release()
+                con.query(SQL, [VALS], function (err, result, fields) {
+                    if (err) throw err;
+                    con.release()
+                });
             });
-        });
+        }
     });
 };
 module.exports = {
